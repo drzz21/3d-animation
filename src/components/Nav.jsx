@@ -1,7 +1,7 @@
 import React from 'react';
 import Logo from '../assets/images/logo.svg';
-import Search from '../assets/images/search.svg'
-import Store from '../assets/images/store.svg'
+import Search from '../assets/images/search.svg';
+import Store from '../assets/images/store.svg';
 
 function Nav() {
 	return (
@@ -39,20 +39,11 @@ function Nav() {
 						<a className="link-styled">Support</a>
 					</li>
 					<li>
-						<img src={Search} alt='Search'/>
+						<img src={Search} alt="Search" />
 					</li>
 					<li>
-						<img src={Store} alt='Store'/>
+						<img src={Store} alt="Store" />
 					</li>
-					
-					
-					
-					
-					
-					
-					
-					
-					
 				</ul>
 			</div>
 		</nav>
