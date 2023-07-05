@@ -22,6 +22,7 @@ function Jumbotron() {
 			<img className='iphone-img' src={HoldingIphone} alt="iPhone"/>
 		</div>
 	);
+	
 }
 
 export default Jumbotron;
