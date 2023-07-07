@@ -23,6 +23,9 @@ import {
 
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import {scrollAnimation} from '../lib/scroll-animation'
+
+gsap.registerPlugin(ScrollTrigger);
 
 // creamos la funcion donde iniciaremos nuestro giviewer
 // para mostrar nuestro modelo 3d
@@ -30,6 +33,12 @@ function WebGiViewer() {
 	// guardamos una referencia para el canvas donde se mostrará
 	// el gi viewer y la enlazamos usando ref={}
 	const canvasRef = useRef(null);
+
+	const memoizedScrollAnimation=useCallback((position,target,onUpdate)=>{
+		if(position && target && onUpdate){
+			scrollAnimation(position,target,onUpdate);
+		}
+	},[])
 
 	// creamos nuestra funcion y la guardamos en un callback para evitar
 	//que se esté ejecutando con cada nuevo renderizado de nuestra aplicación
@@ -90,6 +99,11 @@ function WebGiViewer() {
 		//con esta variable llevaremos el control para saber si debemos o no cambiar la posicion de la camara
 		let needsUpdate = true;
 
+		const onUpdate=()=>{
+			needsUpdate=true;
+			viewer.setDirty();
+		}
+
 		// agregamos un eventlistener a nuestro viewer, es preFrame, preFrame es una fase de la ejecución del webviewer que 
 		//es exlucisva de webgi y se puede consultar en la documentación
 		viewer.addEventListener('preFrame', () => {
@@ -99,6 +113,8 @@ function WebGiViewer() {
 				needsUpdate = false;
 			}
 		});
+
+		memoizedScrollAnimation(position,target,onUpdate);
 	}, []);
 
 	// usamos useEffect para solo ejecutar la función en el momento en que se inicia por primera vez el componente
