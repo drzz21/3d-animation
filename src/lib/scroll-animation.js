@@ -12,7 +12,7 @@ export const scrollAnimation = (position, target, onUpdate) => {
 			trigger: '.sound-section',
 			start: "top bottom",
 			end: "top top",
-			scrub: 1,
+			scrub: 2,
 			immediateRender: false
 		},
 		onUpdate
@@ -25,7 +25,7 @@ export const scrollAnimation = (position, target, onUpdate) => {
 			trigger: '.sound-section',
 			start: "top bottom",
 			end: "top top",
-			scrub: 1,
+			scrub: 2,
 			immediateRender: false
 		}
 	}).to('.jumbotron-section', {
@@ -34,7 +34,7 @@ export const scrollAnimation = (position, target, onUpdate) => {
 			trigger: '.sound-section',
 			start: "top bottom",
 			end: "top top",
-			scrub: 1,
+			scrub: 2,
 			immediateRender: false
 		}
 	}).to('.sound-section-content', {
@@ -43,7 +43,7 @@ export const scrollAnimation = (position, target, onUpdate) => {
 			trigger: '.sound-section',
 			start: "top bottom",
 			end: "top top",
-			scrub: 1,
+			scrub: 2,
 			immediateRender: false
 		}
 	})
@@ -79,7 +79,7 @@ export const scrollAnimation = (position, target, onUpdate) => {
 				trigger: '.display-section',
 				start: "top bottom",
 				end: "top top",
-				scrub: 1,
+				scrub: 2,
 				immediateRender: false
 			}
 		});
