@@ -10,13 +10,12 @@ function SoundSection() {
 		// se debe desplazar en el eje x(que en este caso es el valor de top) hacia las coordenadas
 		//inferiores del elemento que estamos consultando
 
-		//al momento de hacer scroll estamos en la sección de sonido
-		//pero obtendremos las coordenadas de la sección display,
-		//usando getBoundingClientRect obtenemos las coordenadas del elemento, y con bottom obtenemos las coordenadas
-		//de la parte superior del elemento
 
+		//getBoundingClientRect nos ayuda a obtener las coordenadas de un elemento, de acuerdo al viewport
+		//entonces para obtener las coordenadas del elemento en el documento agregamos ademas de las coordenadas del viewport,
+		//el valor del scroll, por lo tanto con esta suma obtenemos el valor correcto del elemento al que queremos desplazarnos en nuestra página
 		scrollTo({
-			top: element?.getBoundingClientRect().bottom,
+			top: element?.getBoundingClientRect().top + window.scrollY,
 			left: 0,
 			behavior: 'smooth',
 		});
