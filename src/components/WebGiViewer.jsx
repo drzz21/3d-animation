@@ -20,11 +20,15 @@ import {
 	AssetManagerBasicPopupPlugin,
 	mobileAndTabletCheck,
 } from 'webgi';
-
+// importamos gsap
 import gsap from 'gsap';
+// importamos el scrolltrigger, de la libreria gsap,
+//para poder utilizarlo en las animaciones al momento de hacer el scroll
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import {scrollAnimation} from '../lib/scroll-animation'
+// importamos la funcion scrollAnimation de la nueva carpeta que creamos para poder llamarla
+import { scrollAnimation } from '../lib/scroll-animation';
 
+//registramos el plugin del scroll para poder utilizarlo
 gsap.registerPlugin(ScrollTrigger);
 
 // creamos la funcion donde iniciaremos nuestro giviewer
@@ -34,11 +38,19 @@ function WebGiViewer() {
 	// el gi viewer y la enlazamos usando ref={}
 	const canvasRef = useRef(null);
 
-	const memoizedScrollAnimation=useCallback((position,target,onUpdate)=>{
-		if(position && target && onUpdate){
-			scrollAnimation(position,target,onUpdate);
-		}
-	},[])
+	//memoizamos la funcion usando useCallback para que no se esté creando nuevamente la función
+	//con cada actualización del componente
+	const memoizedScrollAnimation = useCallback(
+		// recibimos nuestros 3 parametros y validamos que existan y sean validos
+		(position, target, onUpdate) => {
+			if (position && target && onUpdate) {
+				// si los 3 existen llamamos la funcion original con los 3 argumentos
+				scrollAnimation(position, target, onUpdate);
+			}
+		},
+		// solo queremos que se cree una vez entonces enviamos u arreglo vacio de dependencias
+		[]
+	);
 
 	// creamos nuestra funcion y la guardamos en un callback para evitar
 	//que se esté ejecutando con cada nuevo renderizado de nuestra aplicación
@@ -99,12 +111,15 @@ function WebGiViewer() {
 		//con esta variable llevaremos el control para saber si debemos o no cambiar la posicion de la camara
 		let needsUpdate = true;
 
-		const onUpdate=()=>{
-			needsUpdate=true;
+		const onUpdate = () => {
+			//ponemos en true nuestra variable auxiliar para indicar que debemos volver a renderizar
+			needsUpdate = true;
+			// marcamos como dirty al viewer para que la aplicacion
+			//sepa que la cámara debe ser actualizada
 			viewer.setDirty();
-		}
+		};
 
-		// agregamos un eventlistener a nuestro viewer, es preFrame, preFrame es una fase de la ejecución del webviewer que 
+		// agregamos un eventlistener a nuestro viewer, es preFrame, preFrame es una fase de la ejecución del webviewer que
 		//es exlucisva de webgi y se puede consultar en la documentación
 		viewer.addEventListener('preFrame', () => {
 			//si debemos cambiar la posicion de la camara lo hacemos y ponemos nuestra variable bandera en false
@@ -113,8 +128,8 @@ function WebGiViewer() {
 				needsUpdate = false;
 			}
 		});
-
-		memoizedScrollAnimation(position,target,onUpdate);
+		// ejecutamos la función enviando la posicion y objetivo de la camara, y la funcion onUpdate que se crea arriba
+		memoizedScrollAnimation(position, target, onUpdate);
 	}, []);
 
 	// usamos useEffect para solo ejecutar la función en el momento en que se inicia por primera vez el componente

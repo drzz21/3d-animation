@@ -1,12 +1,15 @@
 import React from 'react';
 
 function DisplaySection() {
-
-	const handleScrollToTop=()=>{
+	// creamos funcion para enviar el scroll hacia la parte superior
+	//hacia la coordenada 0,0 que es el inicio del documento
+	const handleScrollToTop = () => {
 		window.scrollTo({
-			top:0,left:0,behavior:"smooth"
-		})
-	}
+			top: 0,
+			left: 0,
+			behavior: 'smooth',
+		});
+	};
 
 	return (
 		<div className="display-section wrapper">
@@ -15,8 +18,10 @@ function DisplaySection() {
 			<span className="description">
 				A display that's up to 2x brighter in the sun.
 			</span>
-			<button className='button'>Try me</button>
-			<button className='back-button' onClick={handleScrollToTop}>TOP</button>
+			<button className="button">Try me</button>
+			<button className="back-button" onClick={handleScrollToTop}>
+				TOP
+			</button>
 		</div>
 	);
 }

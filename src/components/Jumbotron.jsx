@@ -10,7 +10,11 @@ function Jumbotron() {
 		//funcione si el elemento no es nulo, el elemento scrollTo debe recibir las coordenadas top y left,
 		//left es 0 y top es igual a las coordenadas del elemento que obtuvimos con el query, y el comportamiento es smooth
 		//para hacer una transición lenta
-		window.scrollTo({ top: element?.getBoundingClientRect().top,left:0,behavior:'smooth' });
+		window.scrollTo({
+			top: element?.getBoundingClientRect().top,
+			left: 0,
+			behavior: 'smooth',
+		});
 	};
 
 	return (
@@ -26,7 +30,9 @@ function Jumbotron() {
 					<button className="button">Buy</button>
 				</li>
 				<li>
-					<a className="link" onClick={handleLearnMore}>Learn more</a>
+					<a className="link" onClick={handleLearnMore}>
+						Learn more
+					</a>
 				</li>
 			</ul>
 			<img className="iphone-img" src={HoldingIphone} alt="iPhone" />
