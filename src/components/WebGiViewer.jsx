@@ -33,10 +33,49 @@ gsap.registerPlugin(ScrollTrigger);
 
 // creamos la funcion donde iniciaremos nuestro giviewer
 // para mostrar nuestro modelo 3d
-function WebGiViewer() {
+
+const WebGiViewer = forwardRef((props, ref) => {
 	// guardamos una referencia para el canvas donde se mostrará
 	// el gi viewer y la enlazamos usando ref={}
 	const canvasRef = useRef(null);
+	const [viewerRef, setViewerRef] = useState(null);
+	const [targetRef, setTargetRef] = useState(null);
+	const [cameraRef, setCameraRef] = useState(null);
+	const [positionRef, setPositionRef] = useState(null);
+	const canvasContainerRef = useRef(null);
+
+	const [previewMode, setPreviewMode] = useState(false);
+
+	useImperativeHandle(ref, () => ({
+		triggerPreview() {
+			setPreviewMode(true);
+
+			props.contentRef.current.style.opacity = '0';
+			canvasContainerRef.current.style.pointerEvents = 'all';
+
+			gsap.to(positionRef, {
+				x: 13.04,
+				y: -2.01,
+				z: 2.29,
+				duration: 2,
+				onUpdate: () => {
+					viewerRef.setDirty();
+					cameraRef.positionTargetUpdated(true);
+				},
+			});
+
+			gsap.to(targetRef, {
+				x: 0.11,
+				y: 0.0,
+				z: 0.0,
+				duration: 2,
+			});
+
+			viewerRef.scene.activeCamera.setCameraOptions({
+				controlsEnabled: true,
+			});
+		},
+	}));
 
 	//memoizamos la funcion usando useCallback para que no se esté creando nuevamente la función
 	//con cada actualización del componente
@@ -61,6 +100,8 @@ function WebGiViewer() {
 			canvas: canvasRef.current,
 		});
 
+		setViewerRef(viewer);
+
 		// agregamos el plugin manejadro de plugins
 		//este plugin maneja los plugins y assets que agreguemos al proyecto
 		//y por assets nos referimos al modelo 3d que vamos a agregar
@@ -73,6 +114,10 @@ function WebGiViewer() {
 		const camera = viewer.scene.activeCamera;
 		const position = camera.position;
 		const target = camera.target;
+
+		setCameraRef(camera);
+		setPositionRef(position);
+		setTargetRef(target);
 
 		// agregamos los plugins que necesitaremos, estos plugins cambian la apariencia de nuestro modelo 3d, por eso
 		//solo debemos agregar los que necesitamos
@@ -136,13 +181,57 @@ function WebGiViewer() {
 	//y como lo tenemos cacheado con el useCallback los próximos renderizados no harán que se ejecute de nuevo
 	useEffect(() => {
 		setupViewer();
-	});
+	}, []);
+
+	const handleExit = useCallback(() => {
+		canvasContainerRef.current.style.pointerEvents = 'none';
+		props.contentRef.current.style.opacity = '1';
+		viewerRef.scene.activeCamera.setCameraOptions({
+			controlsEnabled: false,
+		});
+		setPreviewMode(false);
+
+		gsap.to(positionRef, {
+			x: 1.56,
+			y: 5.0,
+			z: 0.01,
+			scrollTrigger: {
+				trigger: '.display-section',
+				start: 'top bottom',
+				end: 'top top',
+				scrub: 2,
+				immediateRender: false,
+			},
+			onUpdate: () => {
+				viewerRef.setDirty();
+				cameraRef.positionTargetUpdated(true);
+			},
+		});
+		gsap.to(targetRef, {
+			x: -0.55,
+			y: 0.32,
+			z: 0.0,
+
+			scrollTrigger: {
+				trigger: '.display-section',
+				start: 'top bottom',
+				end: 'top top',
+				scrub: 2,
+				immediateRender: false,
+			},
+		});
+	}, [canvasContainerRef, viewerRef, positionRef, cameraRef, targetRef]);
 
 	return (
-		<div id="webgi-canvas-container">
+		<div id="webgi-canvas-container" ref={canvasContainerRef}>
 			<canvas id="webgi-canvas" ref={canvasRef} />
+			{previewMode && (
+				<button className="button" onClick={handleExit}>
+					Exit
+				</button>
+			)}
 		</div>
 	);
-}
+});
 
 export default WebGiViewer;

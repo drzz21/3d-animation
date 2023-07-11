@@ -1,6 +1,6 @@
 import React from 'react';
 
-function DisplaySection() {
+function DisplaySection({ triggerPreview }) {
 	// creamos funcion para enviar el scroll hacia la parte superior
 	//hacia la coordenada 0,0 que es el inicio del documento
 	const handleScrollToTop = () => {
@@ -18,7 +18,9 @@ function DisplaySection() {
 			<span className="description">
 				A display that's up to 2x brighter in the sun.
 			</span>
-			<button className="button">Try me</button>
+			<button className="button" onClick={triggerPreview}>
+				Try me
+			</button>
 			<button className="back-button" onClick={handleScrollToTop}>
 				TOP
 			</button>
