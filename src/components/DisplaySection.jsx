@@ -18,6 +18,8 @@ function DisplaySection({ triggerPreview }) {
 			<span className="description">
 				A display that's up to 2x brighter in the sun.
 			</span>
+			{/* con el click en este boton de try me, vamos a disparar una funcion en el componente padre (app.jsx), que a su vez dispara otra funcion
+			en otro componente (webgi viewer) */}
 			<button className="button" onClick={triggerPreview}>
 				Try me
 			</button>

@@ -34,43 +34,65 @@ gsap.registerPlugin(ScrollTrigger);
 // creamos la funcion donde iniciaremos nuestro giviewer
 // para mostrar nuestro modelo 3d
 
+// usamos forwardRef para tener un ref en nuestro componente que enviaremos a nuestro padre (app.jsx)
 const WebGiViewer = forwardRef((props, ref) => {
 	// guardamos una referencia para el canvas donde se mostrará
 	// el gi viewer y la enlazamos usando ref={}
 	const canvasRef = useRef(null);
+	// creamos estados para almacenar las referencias  anuestro elementos del webgiviewer
+	//para poder usarlos en la funcion useImperativeHandle
 	const [viewerRef, setViewerRef] = useState(null);
 	const [targetRef, setTargetRef] = useState(null);
 	const [cameraRef, setCameraRef] = useState(null);
 	const [positionRef, setPositionRef] = useState(null);
+	// agregamos una referencia a nuestro canvasContainer para poder activar los elementos del click
 	const canvasContainerRef = useRef(null);
 
+	//agregamos esta bandera para saber cuando estamos o no estamos en el modo preview y
+	//la iniciamos en 0 porque al inicio no estamos en modo preview
 	const [previewMode, setPreviewMode] = useState(false);
 
+	// con este hook definimos una funcion imperativa, es decir, definimos
+	//como se ejecutará una funcion, la funcion que está expuesta por medio de este hook
+	//se puede llamar desde fuera del componente a través de la ref
+	//imperativehandle nos ayuda a llamar funciones definidas en componentes hijos desde el componente
+	//padre, la forma tradicional es que las funciones se creen en el padre y se llamen
+	//en los hijos, pero de este modo podemos hacer el proceso contrario
+	//para usar useImperativeHandle debemos tambien usar useRef
 	useImperativeHandle(ref, () => ({
 		triggerPreview() {
+			// ponemos nuestra bandera en true para saber que estamos en modo preview
 			setPreviewMode(true);
 
+			// cambiamos la opacidad de nuestro contentRef a 0, recordar que hace referencia al contenedor
+			//donde están todas las secciones excepto el webgiviewer (esto lo enviamos por props),
+			// de este modo conseguimos ocultar todo lo demás
+			//a excepcion del modelo 3d
 			props.contentRef.current.style.opacity = '0';
+			//agregamos los pointerevents a nuestro canvas para poder activar la rotación
 			canvasContainerRef.current.style.pointerEvents = 'all';
-
+			// llamamos la funcion de gsap para cambiar la posicion de nuestro elemento
+			//y de nuevo la llamamos para actualizar el objetivo, como no estamos haciendo un timeline
+			//llamamos de nuevo la instancia de gsap
 			gsap.to(positionRef, {
 				x: 13.04,
 				y: -2.01,
 				z: 2.29,
 				duration: 2,
+				// creamos la funcion onUpdate de nuevo ya que no tenemos la referencia
 				onUpdate: () => {
 					viewerRef.setDirty();
 					cameraRef.positionTargetUpdated(true);
 				},
 			});
-
+			// hacemos de nuevo lo mismo entonces para actualizar el target usando la referencia que ya obtuvimos
 			gsap.to(targetRef, {
 				x: 0.11,
 				y: 0.0,
 				z: 0.0,
 				duration: 2,
 			});
-
+			//y con esto activamos la rotación en el modelo( activamos el control de la camara al usuario)
 			viewerRef.scene.activeCamera.setCameraOptions({
 				controlsEnabled: true,
 			});
@@ -100,6 +122,7 @@ const WebGiViewer = forwardRef((props, ref) => {
 			canvas: canvasRef.current,
 		});
 
+		//asignamos el viewer a nuestro estado
 		setViewerRef(viewer);
 
 		// agregamos el plugin manejadro de plugins
@@ -115,6 +138,8 @@ const WebGiViewer = forwardRef((props, ref) => {
 		const position = camera.position;
 		const target = camera.target;
 
+		//asignamos la camara posiciion y target a nuestro estado para usarlos
+		//en la funcion del imperative handle a través de su referencia
 		setCameraRef(camera);
 		setPositionRef(position);
 		setTargetRef(target);
@@ -183,14 +208,25 @@ const WebGiViewer = forwardRef((props, ref) => {
 		setupViewer();
 	}, []);
 
+	// creamos la funcion para salir de nuestro modo preview y la guardamos
+	//en un callback para que no se esté creando cada vez
+	//este metodo hará que retornemos al estado anterior antes de activar el preview mode
+	//con la configuración que teniamos anteriormente
 	const handleExit = useCallback(() => {
+		//eliminamos los pointer events de nuestro canvas
 		canvasContainerRef.current.style.pointerEvents = 'none';
+		//regresamos la opacidad de las demás secciones de la página
 		props.contentRef.current.style.opacity = '1';
+		// y deshabilitamos la rotación de nuestro modelo 3d
 		viewerRef.scene.activeCamera.setCameraOptions({
 			controlsEnabled: false,
 		});
+		//ponemos la bandera de previewmode en false para que nos oculte el botón de salir
 		setPreviewMode(false);
 
+		//retornamos el modelo a la posicion en la que estaba antes de que entraramos al preview mode
+		// y lo hacemos usando gsap porque no estamos usando el metodo de timeline, y usamos las variables de estado
+		//que tenemos guardadas localmente
 		gsap.to(positionRef, {
 			x: 1.56,
 			y: 5.0,
@@ -203,6 +239,7 @@ const WebGiViewer = forwardRef((props, ref) => {
 				immediateRender: false,
 			},
 			onUpdate: () => {
+				//creamos de nuevo nuestro metodo onUpdate para usarlo aquí
 				viewerRef.setDirty();
 				cameraRef.positionTargetUpdated(true);
 			},
@@ -220,11 +257,14 @@ const WebGiViewer = forwardRef((props, ref) => {
 				immediateRender: false,
 			},
 		});
+		//agregamos nuestro arreglo de dependencias para actualizar la función cuando alguno de destos valores cambie
 	}, [canvasContainerRef, viewerRef, positionRef, cameraRef, targetRef]);
 
 	return (
 		<div id="webgi-canvas-container" ref={canvasContainerRef}>
 			<canvas id="webgi-canvas" ref={canvasRef} />
+			{/* vamos a mostrar el boton para salir del modo preview dependiendo si tenemos
+			nuestra bandera de preview en true*/}
 			{previewMode && (
 				<button className="button" onClick={handleExit}>
 					Exit
