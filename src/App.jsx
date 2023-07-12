@@ -3,6 +3,7 @@ import Jumbotron from './components/Jumbotron';
 import SoundSection from './components/SoundSection';
 import DisplaySection from './components/DisplaySection';
 import WebGiViewer from './components/WebGiViewer';
+import Loader from "./components/Loader";
 import { useRef } from 'react';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
 
 	return (
 		<div className="App">
+			<Loader/>
 			{/* agregamos las secciones dentro de un div para poder ocultarlas y creamos
 			una referencia a este contenedor */}
 			<div id="content" ref={contentRef}>

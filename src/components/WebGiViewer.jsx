@@ -52,6 +52,8 @@ const WebGiViewer = forwardRef((props, ref) => {
 	//la iniciamos en 0 porque al inicio no estamos en modo preview
 	const [previewMode, setPreviewMode] = useState(false);
 
+	const [isMobile, setIsMobile] = useState(null);
+
 	// con este hook definimos una funcion imperativa, es decir, definimos
 	//como se ejecutará una funcion, la funcion que está expuesta por medio de este hook
 	//se puede llamar desde fuera del componente a través de la ref
@@ -103,10 +105,10 @@ const WebGiViewer = forwardRef((props, ref) => {
 	//con cada actualización del componente
 	const memoizedScrollAnimation = useCallback(
 		// recibimos nuestros 3 parametros y validamos que existan y sean validos
-		(position, target, onUpdate) => {
+		(position, target, isMobile, onUpdate) => {
 			if (position && target && onUpdate) {
 				// si los 3 existen llamamos la funcion original con los 3 argumentos
-				scrollAnimation(position, target, onUpdate);
+				scrollAnimation(position, target, isMobile, onUpdate);
 			}
 		},
 		// solo queremos que se cree una vez entonces enviamos u arreglo vacio de dependencias
@@ -124,6 +126,8 @@ const WebGiViewer = forwardRef((props, ref) => {
 
 		//asignamos el viewer a nuestro estado
 		setViewerRef(viewer);
+		const isMobileOrTablet = mobileAndTabletCheck();
+		setIsMobile(isMobileOrTablet);
 
 		// agregamos el plugin manejadro de plugins
 		//este plugin maneja los plugins y assets que agreguemos al proyecto
@@ -173,6 +177,12 @@ const WebGiViewer = forwardRef((props, ref) => {
 		// con esto deshabilitamos los controles de la camara del modelo, para que el usuario no pueda rotarla
 		//una vez que se carga la página y el modelo
 		viewer.scene.activeCamera.setCameraOptions({ controlsEnabled: false });
+		if (isMobileOrTablet) {
+			position.set(-16.7, 1.17, 11.7);
+			target.set(0, 1.37, 0);
+
+			props.contentRef.current.className = 'mobile-or-tablet';
+		}
 
 		// nos movemos hasta la parte superior de nuestra página siempre para que se cargue, para ahí mostrar
 		//las animaciones
@@ -199,7 +209,7 @@ const WebGiViewer = forwardRef((props, ref) => {
 			}
 		});
 		// ejecutamos la función enviando la posicion y objetivo de la camara, y la funcion onUpdate que se crea arriba
-		memoizedScrollAnimation(position, target, onUpdate);
+		memoizedScrollAnimation(position, target, isMobileOrTablet, onUpdate);
 	}, []);
 
 	// usamos useEffect para solo ejecutar la función en el momento en que se inicia por primera vez el componente
@@ -228,9 +238,9 @@ const WebGiViewer = forwardRef((props, ref) => {
 		// y lo hacemos usando gsap porque no estamos usando el metodo de timeline, y usamos las variables de estado
 		//que tenemos guardadas localmente
 		gsap.to(positionRef, {
-			x: 1.56,
-			y: 5.0,
-			z: 0.01,
+			x: !isMobile ? 1.56 : 9.36,
+			y: !isMobile ? 5.0 : 10.95,
+			z: !isMobile ? 0.01 : 0.09,
 			scrollTrigger: {
 				trigger: '.display-section',
 				start: 'top bottom',
@@ -245,9 +255,9 @@ const WebGiViewer = forwardRef((props, ref) => {
 			},
 		});
 		gsap.to(targetRef, {
-			x: -0.55,
-			y: 0.32,
-			z: 0.0,
+			x: !isMobile ? -0.55 : -1.62,
+			y: !isMobile ? 0.32 : 0.02,
+			z: !isMobile ? 0.0 : -0.06,
 
 			scrollTrigger: {
 				trigger: '.display-section',

@@ -6,7 +6,7 @@ import gsap from 'gsap';
 //el objetivo y la función onUpdate para actualizar la posición de la cámara
 //siempre que queramos cambiar los valores de la camara necesitaremos la función onUpdate
 // para actualizarla y rerenderizarla
-export const scrollAnimation = (position, target, onUpdate) => {
+export const scrollAnimation = (position, target, isMobile, onUpdate) => {
 	// creamos un nuevo timeline de gsap para agrupar varias animaciones
 	const tl = gsap.timeline();
 
@@ -16,9 +16,9 @@ export const scrollAnimation = (position, target, onUpdate) => {
 
 	tl.to(position, {
 		// estos son los valores que cambiaremos
-		x: -3.38,
-		y: -10.74,
-		z: -5.93,
+		x: !isMobile ? -3.38 : -7.0,
+		y: !isMobile ? -10.74 : -12.2,
+		z: !isMobile ? -5.93 : -6.0,
 		// creamos nuestro scrolltrigger para configurarlo como el disparador de esta animación
 		scrollTrigger: {
 			//le indicamos que la animación inicia en sound section
@@ -49,9 +49,9 @@ export const scrollAnimation = (position, target, onUpdate) => {
 		//copiamos y concatenamos para ahora modificar el target, tambien animando,
 		// aqui no debemos ejecutar de nuevo onUpdate porque basta con ejecutarlo una vez
 	}).to(target, {
-		x: 1.52,
-		y: 0.77,
-		z: -1.08,
+		x: !isMobile ? 1.52 : 0.7,
+		y: !isMobile ? 0.77 : 1.9,
+		z: !isMobile ? -1.08 : 0.7,
 
 		scrollTrigger: {
 			trigger: '.sound-section',
@@ -86,9 +86,9 @@ export const scrollAnimation = (position, target, onUpdate) => {
 		//agregamos la animacion  del movimiento que se hará al entrar en la display section, en la cual de igual manera, modificaremos
 		// la posicion, el objetivo y modificaremos la opacidad de la sección para que haga un fadeIn
 		.to(position, {
-			x: 1.56,
-			y: 5.0,
-			z: 0.01,
+			x: !isMobile ? 1.56 : 9.36,
+			y: !isMobile ? 5.0 : 10.95,
+			z: !isMobile ? 0.01 : 0.09,
 
 			scrollTrigger: {
 				trigger: '.display-section',
@@ -99,9 +99,9 @@ export const scrollAnimation = (position, target, onUpdate) => {
 			},
 			onUpdate
 		}).to(target, {
-			x: -0.55,
-			y: 0.32,
-			z: 0.0,
+			x: !isMobile ? -0.55 : -1.62,
+			y: !isMobile ? 0.32 : 0.02,
+			z: !isMobile ? 0.0 : -0.06,
 
 			scrollTrigger: {
 				trigger: '.display-section',
