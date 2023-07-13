@@ -6,6 +6,7 @@ import gsap from 'gsap';
 //el objetivo y la función onUpdate para actualizar la posición de la cámara
 //siempre que queramos cambiar los valores de la camara necesitaremos la función onUpdate
 // para actualizarla y rerenderizarla
+//agregamos tambien el parametro isMobile donde revisamos si es o no un dispositivo movil
 export const scrollAnimation = (position, target, isMobile, onUpdate) => {
 	// creamos un nuevo timeline de gsap para agrupar varias animaciones
 	const tl = gsap.timeline();
@@ -16,6 +17,9 @@ export const scrollAnimation = (position, target, isMobile, onUpdate) => {
 
 	tl.to(position, {
 		// estos son los valores que cambiaremos
+		//agregamos un ternario para verificar que nos encontramos en un dispositivo movil
+		//y en caso afirmativo asignar unos valores, y en caso contrario asignar otros
+		//para que el modelo se vea bien dentro de la ventana del navegador
 		x: !isMobile ? -3.38 : -7.0,
 		y: !isMobile ? -10.74 : -12.2,
 		z: !isMobile ? -5.93 : -6.0,

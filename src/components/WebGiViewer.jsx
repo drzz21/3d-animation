@@ -51,7 +51,8 @@ const WebGiViewer = forwardRef((props, ref) => {
 	//agregamos esta bandera para saber cuando estamos o no estamos en el modo preview y
 	//la iniciamos en 0 porque al inicio no estamos en modo preview
 	const [previewMode, setPreviewMode] = useState(false);
-
+	//vamos a crear otra bandera para revisar si estamos o no en un dispositivo móvil
+	//para cargar el modelo 3d en las coordenadas correctas de acuerdo a esto
 	const [isMobile, setIsMobile] = useState(null);
 
 	// con este hook definimos una funcion imperativa, es decir, definimos
@@ -126,6 +127,9 @@ const WebGiViewer = forwardRef((props, ref) => {
 
 		//asignamos el viewer a nuestro estado
 		setViewerRef(viewer);
+		//llamamos el metodo para checar si estamos en telefono o tablet
+		//lo asignamos en una constante, y lo asignamos a nuestro estado local
+		//para acceder al valor desde fuera de esta función
 		const isMobileOrTablet = mobileAndTabletCheck();
 		setIsMobile(isMobileOrTablet);
 
@@ -177,10 +181,14 @@ const WebGiViewer = forwardRef((props, ref) => {
 		// con esto deshabilitamos los controles de la camara del modelo, para que el usuario no pueda rotarla
 		//una vez que se carga la página y el modelo
 		viewer.scene.activeCamera.setCameraOptions({ controlsEnabled: false });
+		//revisamos si estamos en un dispositivo movil o telefono y ajustamos la posicion inicial
+		//sobreescribiendo la que ya tenemos en nuestro modelo
 		if (isMobileOrTablet) {
+			//la funcion set de las posiciones recibe las coordenadas x,y y z
 			position.set(-16.7, 1.17, 11.7);
 			target.set(0, 1.37, 0);
-
+			//agregamos tambien a nuestro contenedor la clase mobile-or-tablet
+			//esta clase nos ayudará para que en movil o tablet no se muestre la imagen del iphone y directamente se cargue el modelo
 			props.contentRef.current.className = 'mobile-or-tablet';
 		}
 
@@ -209,6 +217,8 @@ const WebGiViewer = forwardRef((props, ref) => {
 			}
 		});
 		// ejecutamos la función enviando la posicion y objetivo de la camara, y la funcion onUpdate que se crea arriba
+		//agregamos tambien la propiedad de isMobileOrTablet, para ajustar las animaciones del scroll
+		//en cada resolución
 		memoizedScrollAnimation(position, target, isMobileOrTablet, onUpdate);
 	}, []);
 
@@ -238,6 +248,8 @@ const WebGiViewer = forwardRef((props, ref) => {
 		// y lo hacemos usando gsap porque no estamos usando el metodo de timeline, y usamos las variables de estado
 		//que tenemos guardadas localmente
 		gsap.to(positionRef, {
+			//agregamos tambien aqui operador ternario, para validar si estamos o no en movil
+			//y ajustar las coordenadas de nuestro modelo 3d respectivamente
 			x: !isMobile ? 1.56 : 9.36,
 			y: !isMobile ? 5.0 : 10.95,
 			z: !isMobile ? 0.01 : 0.09,
@@ -255,6 +267,7 @@ const WebGiViewer = forwardRef((props, ref) => {
 			},
 		});
 		gsap.to(targetRef, {
+			//igual para el target ajustamos dependiendo si estamos o no en movil
 			x: !isMobile ? -0.55 : -1.62,
 			y: !isMobile ? 0.32 : 0.02,
 			z: !isMobile ? 0.0 : -0.06,

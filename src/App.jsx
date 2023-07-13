@@ -3,6 +3,7 @@ import Jumbotron from './components/Jumbotron';
 import SoundSection from './components/SoundSection';
 import DisplaySection from './components/DisplaySection';
 import WebGiViewer from './components/WebGiViewer';
+// importamos nuestro loader
 import Loader from "./components/Loader";
 import { useRef } from 'react';
 
@@ -20,6 +21,7 @@ function App() {
 
 	return (
 		<div className="App">
+			{/* colocamos el loader como primer elemento y al ocupar todo ancho y alto cubrirá toda la pantalla */}
 			<Loader/>
 			{/* agregamos las secciones dentro de un div para poder ocultarlas y creamos
 			una referencia a este contenedor */}
